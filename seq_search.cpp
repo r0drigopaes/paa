@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define MAX 100000
-
 int find_x(int *a, int n, int x)
 {
     for (int i=0; i < n; ++i)
@@ -16,9 +14,10 @@ int find_x(int *a, int n, int x)
 }
 
 int main() {
-    int a[MAX];
+    int *a;
     int n, x;
     scanf("%d",&n);
+    a = (int *) malloc( sizeof(int) * n);
     for (int i=0; i < n; ++i)
     {   
         scanf("%d",&a[i]);

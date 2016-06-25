@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define MAX 100000
-
 /*
 Left inclusivo
 right exclusivo
@@ -21,9 +19,10 @@ int find_x(int *a, int left, int right, int x)
 }
 
 int main() {
-    int a[MAX];
+    int *a;
     int n, x;
     scanf("%d",&n);
+    a = (int *) malloc( sizeof(int) * n);
     for (int i=0; i < n; ++i)
     {   
         scanf("%d",&a[i]);
