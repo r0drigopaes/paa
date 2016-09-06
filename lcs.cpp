@@ -92,22 +92,23 @@ Top down sem economia de memória
 */
 int lcs_topdown(int i, int j)
 {	
+
 	if (memo[i][j] != -1)
 	{		
 		return memo[i][j];
 	}
 	if (i==0 || j==0)
-	{
+	{	
 		memo[i][j] = 0;
 	}
 	else
 	{
 		if (a[i-1] == b[j-1])
-		{
+		{	
 			memo[i][j] = 1 + lcs_topdown(i-1, j-1);
 		}
 		else
-		{
+		{		
 			memo[i][j] = max(lcs_topdown(i, j-1), lcs_topdown(i-1, j));
 		}	
 	}
@@ -120,15 +121,15 @@ int main()
 
 	cin >> a >> b;
 	// Trecho para as versões sem economia de memória
-	// memo.resize(a.length()+1);
-	// for (int i=0; i <= a.length(); ++i)
-	// {
-	// 	memo[i].resize(b.length()+1, -1);
-	// }
+	memo.resize(a.length()+1);
+	for (int i=0; i <= a.length(); ++i)
+	{
+		memo[i].resize(b.length()+1, -1);
+	}
 
-	// printf("%d\n", lcs_topdown(a.length(), b.length()) );
+	printf("%d\n", lcs_topdown(a.length(), b.length()) );
 	// printf("%d\n", lcs_bottomup(a.length(), b.length()) );
-	printf("%d\n", lcs_bottom_memory_trick(a.length(), b.length()) );
+	// printf("%d\n", lcs_bottom_memory_trick(a.length(), b.length()) );
 
 	return 0;
 }
