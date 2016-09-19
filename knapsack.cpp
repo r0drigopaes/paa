@@ -11,10 +11,35 @@ using namespace std;
 #define MAX_N 10
 #define MAX_M 1000
 
-int memo[MAX_N+1][MAX_M];
+int memo[MAX_N+1][MAX_M+1];
 int p[MAX_N];
 int w[MAX_N];
 int c, n;
+
+
+int dp_bottom_up()
+{
+	// quando todos os elementos encerraram
+	for (int i=0; i <= rc ; ++i)
+	{
+		memo[n][i] = 0;
+	}
+
+	// quando a mochila acabou 
+	for (int i=0; i <= n; ++i)
+	{
+		memo[i][0] = 0;
+	}
+
+	for (int rc=0; rc <= c; ++rc)
+	{
+		for (int i=n; i >=0; --i)
+		{
+
+		}
+	}
+	
+}
 
 int dp(int i, int rc)
 {
