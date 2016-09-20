@@ -8,8 +8,8 @@ Rodrigo Paes
 #include <bits/stdc++.h>
 using namespace std;
 
-#define MAX_N 10
-#define MAX_M 1000
+#define MAX_N 10000
+#define MAX_M 100
 
 int memo[MAX_N+1][MAX_M+1];
 int p[MAX_N];
@@ -19,25 +19,34 @@ int c, n;
 
 int dp_bottom_up()
 {
-	// quando todos os elementos encerraram
-	for (int i=0; i <= rc ; ++i)
-	{
-		memo[n][i] = 0;
-	}
-
-	// quando a mochila acabou 
-	for (int i=0; i <= n; ++i)
-	{
-		memo[i][0] = 0;
-	}
-
 	for (int rc=0; rc <= c; ++rc)
 	{
 		for (int i=n; i >=0; --i)
 		{
+			if (rc==0 || i==n)
+			{
+				memo[i][rc] = 0;
+			}
+			else if (w[i] > rc)
+			{
+				memo[i][rc] = memo[i+1][rc];
+			}
+			else
+			{
+				memo[i][rc] = max( p[i] + memo[i+1][rc-w[i]], memo[i+1][rc] );
+			}
 
 		}
 	}
+	for (int i=0; i<=n; ++i)
+	{
+		for (int j=0; j<=c; ++j)
+		{
+			printf("%d ",memo[i][j]);
+		}
+		printf("\n");
+	}
+	return memo[0][c];
 	
 }
 
@@ -81,7 +90,8 @@ int main()
 		scanf("%d", &w[i]);
 	}
 
-	printf("%d\n", dp(0,c));
+	// printf("%d\n", dp(0,c));
+	printf("%d\n", dp_bottom_up());
 
 
 	return 0;
