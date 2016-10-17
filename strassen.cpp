@@ -1,144 +1,113 @@
 /*
 Mutiplicação de matrizes pelo método do Strassen
 */
+
 #include <bits/stdc++.h>
+
+#define INIT_QUAD(n) n, n
+#define POWER_TWO(n) pow(2, int(ceil(log2(n))))
+#define f(i, s, e) for (int i = s; i < e; ++i)
+#define d_for(a, b) f(i, 0, a) f(j, 0, b)
+
 using namespace std;
 
-struct matrix
-{
-	int **data;
-	int l, c;
+typedef std::vector<int> vi;
+typedef vector<vi> vvi;
 
-	matrix(int l, int c) : l(l), c(c)
-	{
-		data = (int **) calloc(l, sizeof(int *));
-		for (int i=0; i < l; ++i)
-		{
-			data[i] = (int *) calloc (c, sizeof(int));
-		}		
-	}
+struct matrix {
+    vvi data;
+    int r, c;
 
-	~matrix()
-	{
-		free(data);
-	}
+    matrix(int r, int c) : r(r), c(c) {
+        data.resize(r, vi(c));
+    }
+
+    ~matrix() {
+        data.clear();
+    }
+
+    vi &operator[](int index) {
+        return data[index];
+    }
+
+    matrix &operator+(matrix &other) {
+        matrix m(r, c);
+        if (r != other.r || c != other.c) goto fim;
+        d_for(r, c) m[i][j] = data[i][j] + other[i][j];
+        fim:
+        return m;
+    }
+
+    matrix &operator-(matrix &other) {
+        matrix m(r, c);
+        if (r != other.r || c != other.c) goto fim;
+        d_for(r, c)m[i][j] = data[i][j] - other[i][j];
+        fim:
+        return m;
+    }
+
+    void operator=(matrix &other) {
+        matrix m(r, c);
+        d_for(r, c)data[i][j] = other[i][j];
+    }
 };
 
-struct indexes
-{
-	int l1, c1, l2, c2;
+typedef matrix Matrix;
 
-	indexes(int l1, int c1, int l2, int c2) : l1(l1), c1(c1), l2(l2), c2(c2) {}	
-};
+void strassenR(Matrix &A, Matrix &B, Matrix &C, int tam);
 
-struct submatrix
-{
-	matrix *m;
-	indexes i;
-
-	submatrix(matrix *m, indexes i) : m(m), i(i) {}
-
-	indexes get_i11()
-	{
-		return indexes(i.l1, i.c1, (i.l1 + i.l2) / 2, (i.c1 + i.c2) / 2);
-	}
-
-	indexes get_i12()
-	{
-		return indexes(i.l1, (i.c1 + i.c2)/2, (i.l1 + i.l2) / 2, i.c2);
-	}
-
-	indexes get_i21()
-	{
-		return indexes((i.l1 + i.l2) / 2, i.c1, i.l2, (i.c1 + i.c2) / 2);
-	}
-
-	indexes get_i22()
-	{
-		return indexes((i.l1 + i.l2) / 2, (i.c1 + i.c2) / 2, i.l2, i.c2);
-	}
-
-	int rows()
-	{
-		return (i.l2 - i.l1) + 1;
-	}
-
-	int get_single_value()
-	{
-		if (rows() != 1)
-		{
-			printf("A submatriz contém mais de um elemento.\n");
-			exit(-1);
-		}
-		return m->data[i.l1][i.c1];
-	}
-
-};
-
-void add_matrices(matrix &a, matrix &b, submatrix &c)
-{
-	for (int lin = 0; lin <= a.l; ++lin)
-	{
-		for (int col = 0; col <= a.c; ++col)
-		{
-			c.m->data[c.i.l1 + lin][c.i.c1 + col] = a.data[lin][col] + b.data[lin][col];
-		}
-	}
-
+void strassen(Matrix &A, Matrix &B, Matrix &C, unsigned int n) {
+    unsigned int m = POWER_TWO(n);
+    Matrix semi_a(INIT_QUAD(m)), semi_b(INIT_QUAD(m)), semi_c(INIT_QUAD(m));
+    d_for(n, n) {
+            semi_a[i][j] = A[i][j];
+            semi_b[i][j] = B[i][j];
+        }
+    strassenR(semi_a, semi_b, semi_c, m);
+    d_for(n, n) C[i][j] = semi_c[i][j];
 }
 
-/* a recebe b */
-void assign(submatrix &a, submatrix &b)
-{
-	for (int lin = a.i.l1; lin <= a.i.l2; ++lin)
-	{
-		for (int col = a.i.c1; col <= a.i.c2; ++col)
-		{
-			a.m->data[lin][col] = b.m->data[b.i.l1 + lin][b.i.c1 +  col];
-		}
-	}
-}
+void strassenR(Matrix &A, Matrix &B, Matrix &C, int tam) {
 
-matrix mult(submatrix &a, submatrix &b)
-{
-	matrix m(a.rows(), a.rows());
-	
-	if (a.rows() == 1)
-	{
-		m.data[0][0] = a.m->data[a.i.l1][a.i.c1] * b.m->data[b.i.l1][b.i.c1];
-		// c.m->data[a.i.l1][a.i.c1] = 
-	}
-	else
-	{
-		submatrix a11(a.m, a.get_i11());
-		submatrix a12(a.m, a.get_i12());
-		submatrix a21(a.m, a.get_i21());
-		submatrix a22(a.m, a.get_i22());
+    int length = tam / 2;
+    Matrix a11(length, length), a12(length, length), a21(length, length), a22(length, length),
+            b11(length, length), b12(length, length), b21(length, length), b22(length, length),
+            c11(length, length), c12(length, length), c21(length, length), c22(length, length),
+            p1(length, length), p2(length, length), p3(length, length), p4(length, length),
+            p5(length, length), p6(length, length), p7(length, length),
+            aux_a(length, length), aux_b(length, length);
 
-		submatrix b11(b.m, b.get_i11());
-		submatrix b12(b.m, b.get_i12());
-		submatrix b21(b.m, b.get_i21());
-		submatrix b22(b.m, b.get_i22());
+    d_for(length, length) {
+            a11[i][j] = A[i][j];
+            a12[i][j] = A[i][j + length];
+            a21[i][j] = A[i + length][j];
+            a22[i][j] = A[i + length][j + length];
+            b11[i][j] = B[i][j];
+            b12[i][j] = B[i][j + length];
+            b21[i][j] = B[i + length][j];
+            b22[i][j] = B[i + length][j + length];
+        }
 
-		// parei aqui: como fazer declarar o c de tal forma que ele fique com a submatriz correta?
-		submatrix c(&m, indexes(0, 0, ))
+    strassenR(a11 + a22, b11 + b22, p1, length);
+    strassenR(a21 + a22, b11, p2, length);
+    strassenR(a11, b12 - b22, p3, length);
+    strassenR(a22, b21 - b11, p4, length);
+    strassenR(a11 + a12, b22, p5, length);
+    strassenR(a21 - a11, b11 + b12, p6, length);
+    strassenR(a12 - a22, b21 + b22, p7, length);
 
-		submatrix c11(c.m, c.get_i11());
-		submatrix c12(c.m, c.get_i12());
-		submatrix c21(c.m, c.get_i21());
-		submatrix c22(c.m, c.get_i22());
-		
-		add_matrices(mult(a11, b11), mult(a12, b21), c11);
-		add_matrices(mult(a11, b12), mult(a12, b22), c12);
-		add_matrices(mult(a21, b11), mult(a22, b21), c21);
-		add_matrices(mult(a21, b12), mult(a22, b22), c22);
-	}
-	return m;
-}
+    c12 = p3 + p5;
+    c21 = p2 + p4;
+    aux_a = p1 + p4;
+    aux_b = aux_a + p7;
+    c11 = aux_b + p5;
+    aux_a = p1 + p3 + p6;
+    c22 = aux_b - p2;
 
-
-
-int main()
-{
-	return 0;
+    d_for(length, length) {
+            C[i][j] = c11[i][j];
+            C[i][j + length] = c12[i][j];
+            C[i + length][j] = c21[i][j];
+            C[i + length][j + length] = c22[i][j];
+        }
 }
