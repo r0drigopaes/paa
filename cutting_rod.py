@@ -1,3 +1,6 @@
+import sys
+sys.setrecursionlimit(10500) #isso é necessário para aumentar o tamanho da pilha de recurção, devido aos casos de teste muito grandes
+
 def naive(length):
 	if (length == 0): return 0
 	
@@ -41,6 +44,6 @@ while(rodLength != 0):
   memo.extend([-1 for x in range(rodLength)])
 
   #print(naive(rodLength))
-  #print(topDown_dp(rodLength))
+  print(topDown_dp(rodLength))
   #print(bottomUp_dp(rodLength))
   rodLength = int(input())
