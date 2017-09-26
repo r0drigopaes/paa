@@ -37,15 +37,7 @@ int dp_bottom_up()
 			}
 
 		}
-	}
-	for (int i=0; i<=n; ++i)
-	{
-		for (int j=0; j<=c; ++j)
-		{
-			printf("%d ",memo[i][j]);
-		}
-		printf("\n");
-	}
+	}	
 	return memo[0][c];
 	
 }
