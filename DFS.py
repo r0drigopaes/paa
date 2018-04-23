@@ -1,55 +1,38 @@
 from queue import *
 
-def dfs(graph,vstd,fr):
-    print( "Visited " + str(fr) )
-    vstd[ int(fr) ] = True
-    for u in graph[ int(fr) ]:
-        if not vstd[ int(u) ]:
-            dfs(graph,vstd,u)
-        pass
-    pass
+DEBUG = True
 
-def searchDfs(graph, vertex, fr, ar):
-    vstd = []
-    for x in range(0,vertex):
-        vstd.append(False)
-        pass
-    dfs( graph, vstd, fr )
-    return vstd[int(ar)]
+graph = []
+visited = []
 
-def initGraphDirect():
-    graph = [[]]
-    v = 4
-    for x in range(0,v-1):
+def dfs(u):
+    global visited, graph
+
+    if (DEBUG):
+        print(u)
+
+    visited[ u ] = True
+    for v in graph[ u ]:
+        if not visited[ v ]:
+            dfs(v)
+
+# Ilustra a criação de um grafo direcionado
+def init_directed_graph():    
+    global visited, graph
+
+    vertices = 4
+    visited = [False] * vertices
+    # Lista de adjacências para cada vértice
+    for i in range(0,vertices):
         graph.append( [] )
-    graph[0].append(1)
-    graph[0].append(2)
-    graph[1].append(2)
-    graph[2].append(3)
-    print(graph)
-    searchDfs(graph,v,0,3)
-    pass
+    
+    graph[0].append(1) # 0 -> 1
+    graph[0].append(2) # 0 -> 2
+    graph[1].append(2) # 1 -> 2
+    graph[2].append(3) # 2 -> 3
+    if (DEBUG):
+        print(graph)
+    
+    dfs(0)  
 
-def initGraphUndirected():
-    graph = [[]]
-    v = 4
-    for x in range(0,v-1):
-        graph.append( [] )
-    graph[0].append(1)
-    graph[1].append(0)
-    graph[0].append(2)
-    graph[2].append(0)
-    graph[1].append(2)
-    graph[2].append(1)
-    graph[2].append(3)
-    graph[3].append(2)
-    print(graph)
-    searchDfs(graph,v,0,3)
-    pass
-
-
-initGraphDirect()
-
-initGraphUndirected()
-
-
+init_directed_graph()
