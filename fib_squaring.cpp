@@ -55,7 +55,7 @@ void powering(M a, M result, int n)
     }
 }
 
-long long int fib(int n)
+lli fib(int n)
 {
     M result;
     powering(m, result, n);
